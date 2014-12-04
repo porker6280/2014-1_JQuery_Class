@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Black Jack</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="blackjack.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Black Jack <small id="score"></small></h1>
+      <div class="alert alert-info" role="alert" id="outcome">No message.</div>
+      <div class="row" style="margin-bottom: 15px">
+        <div id="btn-control" class="col-xs-12 col-sm-8 col-md-6 col-lg-5">
+          <div class="row">
+            <div class="col-xs-4">
+              <button class="btn btn-success btn-block" id="btn-hit">Hit</button>
+            </div>
+            <div class="col-xs-4">
+              <button class="btn btn-primary btn-block" id="btn-stand">Stand</button>
+            </div>
+            <div class="col-xs-4">
+              <button class="btn btn-danger btn-block" id="btn-deal">Deal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-success" id="player">
+        <div class="panel-heading">
+          <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> Player <span class="badge">15</span></h3>
+        </div>
+        <div class="panel-body blackjack-board">
+          <div class="poker poker-back-heartstone"></div>
+        </div>
+      </div>
+      <div class="panel panel-danger" id="dealer">
+        <div class="panel-heading">
+          <h3 class="panel-title"><span class="glyphicon glyphicon-fire"></span> Dealer <span class="badge">?</span></h3>
+        </div>
+        <div class="panel-body blackjack-board">
+          <div class="poker poker-back-heartstone"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+      (function(e){e(function(){function c(t,n){n=typeof n!=="undefined"?n:"info";var r=e("#outcome");r.css("visibility",t.length==0?"hidden":"inherit").html(t.length==0?"No message.":t).removeClass("alert-success alert-info alert-warning alert-danger").addClass("alert-"+n)}function h(e,t){if(u.indexOf(e)!=-1&&a.indexOf(t)!=-1){this.suit=e;this.rank=t}else{throw"Invalid card: "+e+t}return this}function p(e){this.cards=[];this.steal=typeof e!=="undefined"?e:false;return this}function d(){this.cards=[];for(var e in u)for(var t in a)this.cards.push(new h(u[e],a[t]));return this}function v(e){for(var t,n,r=e.length;r;t=parseInt(Math.random()*r),n=e[--r],e[r]=e[t],e[t]=n);return e}function m(){s.draw_cards("#player .blackjack-board").draw_value("#player .badge");r.draw_cards("#dealer .blackjack-board").draw_value("#dealer .badge");e("#score").text("Score: "+n)}var t=false,n=0,r=null,s=null,o=null;var u=["c","s","h","d"];var a=["a","2","3","4","5","6","7","8","9","t","j","q","k"];var f={a:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,t:10,j:10,q:10,k:10};var l="poker-back-heartstone";h.prototype={toString:function(){return this.suit+this.rank},get_suit:function(){return this.suit},get_rank:function(){return this.rank},draw:function(t){t.append(e.parseHTML('<div class="poker poker-'+this.suit+this.rank+'" />'));return this},draw_back:function(t){t.append(e.parseHTML('<div class="poker '+l+'" />'));return this}};p.prototype={toString:function(){return"Hand contains "+this.cards.join(" ")},add_card:function(e){this.cards.push(e)},get_value:function(){var e=0,t=false;for(var n in this.cards){card=this.cards[n];if(card.get_rank()=="a")t=true;e+=f[card.get_rank()]}if(t&&e<=11)e+=10;if(e<21&&this.cards.length>=5)return 21;return e},draw_value:function(n){var r=e(n);if(t&&this.steal)r.text("?");else r.text(this.get_value());return this},draw_cards:function(n){var r=e(n);r.empty();for(var i in this.cards){if(t&&this.steal&&i==0)this.cards[i].draw_back(r);else this.cards[i].draw(r)}return this}};d.prototype={toString:function(){return"Deck contains "+this.cards.join(" ")},shuffle:function(){this.cards=v(this.cards);return this},deal_card:function(){return this.cards.pop()}};e("#btn-deal").click(function(){o=(new d).shuffle();s=new p;r=new p(true);for(i=0;i<2;i++){s.add_card(o.deal_card());r.add_card(o.deal_card())}if(t){n-=1;c("<strong>Player</strong> lose. <strong>Hit</strong> or <strong>stand</strong>?","success")}else{t=true;c("<strong>Hit</strong> or <strong>stand</strong>?")}m()});e("#btn-hit").click(function(){if(t){if(s.get_value()<=21)s.add_card(o.deal_card());if(s.get_value()>21)c("<strong>Player</strong> have busted","warning");m()}else{c("Click <strong>Deal</strong> button to restart.")}});e("#btn-stand").click(function(){if(!t){c("Click <strong>Deal</strong> button to restart.");return}if(s.get_value()<=21)while(r.get_value()<17||r.get_value()<Math.min(s.get_value(),21))r.add_card(o.deal_card());t=false;player_win=s.get_value()<=21&&r.get_value()<s.get_value()||r.get_value()>21;if(player_win){n+=1;c("<strong>Player</strong> wins.","success")}else{n-=1;c("<strong>Dealer</strong> wins.","danger")}m()});e("#btn-deal").click()})})(jQuery)
+    </script>
+  </body>
+</html>
+
